@@ -72,7 +72,10 @@ virtualFolder:
         - path: System/Delay.h
       folders: []
     - name: Hardware
-      files: []
+      files:
+        - path: Hardware/OLED.c
+        - path: Hardware/OLED.h
+        - path: Hardware/OLED_Font.h
       folders: []
     - name: User
       files:
