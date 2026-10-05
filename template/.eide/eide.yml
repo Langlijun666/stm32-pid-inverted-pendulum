@@ -70,6 +70,8 @@ virtualFolder:
       files:
         - path: System/Delay.c
         - path: System/Delay.h
+        - path: System/Timer.c
+        - path: System/Timer.h
       folders: []
     - name: Hardware
       files:
@@ -77,6 +79,20 @@ virtualFolder:
         - path: Hardware/OLED.h
         - path: Hardware/OLED_Data.c
         - path: Hardware/OLED_Data.h
+        - path: Hardware/LED.c
+        - path: Hardware/LED.h
+        - path: Hardware/Key.c
+        - path: Hardware/Key.h
+        - path: Hardware/RP.c
+        - path: Hardware/RP.h
+        - path: Hardware/Motor.c
+        - path: Hardware/Motor.h
+        - path: Hardware/PWM.c
+        - path: Hardware/PWM.h
+        - path: Hardware/Encoder.c
+        - path: Hardware/Encoder.h
+        - path: Hardware/Serial.c
+        - path: Hardware/Serial.h
       folders: []
     - name: User
       files:
