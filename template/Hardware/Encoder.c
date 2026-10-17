@@ -1,5 +1,5 @@
 #include "stm32f10x.h"                  // Device header
-
+// static int16_t Speed;
 /**
   * 函    数：编码器初始化
   * 参    数：无
@@ -62,3 +62,18 @@ int16_t Encoder_Get(void)
 	TIM_SetCounter(TIM3, 0);
 	return Temp;
 }
+// int16_t GetSpeed(void)
+// {
+// 	return Speed;
+// }
+// void Encoder_Tick(void)
+// {
+// 	static uint16_t count;
+// 	count ++;
+// 	if(count >= 40)
+// 	{
+// 		count = 0;
+// 		Speed = Encoder_Get();
+		
+// 	}
+// }

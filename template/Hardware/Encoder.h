@@ -3,5 +3,6 @@
 
 void Encoder_Init(void);
 int16_t Encoder_Get(void);
-
+void Encoder_Tick(void);
+int16_t GetSpeed(void);
 #endif

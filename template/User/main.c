@@ -9,6 +9,8 @@
 #include "Motor.h"
 #include "encoder.h"
 #include "serial.h"
+#include "PID.h"
+#include <math.h>
 /*OLED屏测试*/
 // int main()
 // {
@@ -190,27 +192,129 @@
 // 	}
 // }
 /*串口测试*/
-uint16_t RP1,RP2,RP3,RP4;
-int main(void)
+// uint16_t RP1,RP2,RP3,RP4;
+// int main(void)
+// {
+// 	OLED_Init();
+// 	RP_Init();
+// 	Serial_Init();
+
+// 	while (1)
+// 	{
+// 		RP1 = RP_GetValue(1);
+// 		RP2 = RP_GetValue(2);
+// 		RP3 = RP_GetValue(3);
+// 		RP4 = RP_GetValue(4);
+// 		OLED_Printf(0,0, OLED_8X16,"RP1:%04d",RP1);
+// 		OLED_Printf(0,16,OLED_8X16,"RP2:%04d",RP2);
+// 		OLED_Printf(0,32,OLED_8X16,"RP3:%04d",RP3);
+// 		OLED_Printf(0,48,OLED_8X16,"RP4:%04d",RP4);
+
+// 		OLED_Update();
+
+// 		Serial_Printf("%d,%d,%d,%d\r\n",RP1,RP2,RP3,RP4);
+// 		Delay_ms(20);
+// 	}
+// }
+uint8_t KeyNumber;
+int16_t Speed;
+PID_t Inner = {
+	.Kp = 0.3,
+	.Ki = 0.3,
+	.Kd = 0,
+	.OutMax = 100,
+	.OutMin = -100
+};
+
+PID_t Outer = {
+	.Kp = 0.3,
+	.Ki = 0,
+	.Kd = 0.4,
+	.OutMax = 20,
+	.OutMin = -20
+};
+
+int16_t speed,location;
+// float OuterTarget,OuterActual,OuterOut;
+// float OuterKp = 0.3,OuterKi = 0,OuterKd = 0.4;
+// float OuterError0,OuterError1,OuterErrorInt,OuterError2;
+// float C,DifOut,Actual1,a;
+uint8_t MotorFlag = 1;
+#define EPSILON 0.01
+int main()
 {
+	Key_Init();
 	OLED_Init();
+	Motor_Init();
+	Timer_Init();
+	Encoder_Init();
 	RP_Init();
 	Serial_Init();
+	LED_Init();
+	OLED_Printf(0,0,OLED_8X16,"2 * PID Control");
+	OLED_Update();
 
 	while (1)
 	{
-		RP1 = RP_GetValue(1);
-		RP2 = RP_GetValue(2);
-		RP3 = RP_GetValue(3);
-		RP4 = RP_GetValue(4);
-		OLED_Printf(0,0, OLED_8X16,"RP1:%04d",RP1);
-		OLED_Printf(0,16,OLED_8X16,"RP2:%04d",RP2);
-		OLED_Printf(0,32,OLED_8X16,"RP3:%04d",RP3);
-		OLED_Printf(0,48,OLED_8X16,"RP4:%04d",RP4);
+		KeyNumber = Key_GetNum();
+		if(KeyNumber == 1)
+		{
+			MotorFlag = !MotorFlag;
+		}
+		if(MotorFlag)
+		LED_ON();
+		else
+		LED_OFF();
+		// Outer.Kp = RP_GetValue(1) / 4095.0 * 2;
+		// Outer.Ki = RP_GetValue(2) / 4095.0 * 2;
+		// Outer.Kd = RP_GetValue(3) / 4095.0 * 2;
+		// Inner.Target = RP_GetValue(4) / 4095.0 * 300 - 150; //定速控制用
+		Outer.Target = RP_GetValue(4) / 4095.0 * 816 - 408;
+		OLED_Printf(0,16,OLED_8X16,"Kp:%4.2f",Outer.Kp);
+		OLED_Printf(0,32,OLED_8X16,"Ki:%4.2f",Outer.Ki);
+		OLED_Printf(0,48,OLED_8X16,"Kd:%4.2f",Outer.Kd);
+		
+		OLED_Printf(64,16,OLED_8X16,"Tar:%+04.0f",Outer.Target);
+		OLED_Printf(64,32,OLED_8X16,"Act:%+04.0f",Outer.Actual);
+		OLED_Printf(64,48,OLED_8X16,"Out:%+04.0f",Outer.Out);
 
+		Serial_Printf("%f,%f,%f\r\n",Outer.Target,Outer.Actual,Outer.Out);
 		OLED_Update();
-
-		Serial_Printf("%d,%d,%d,%d\r\n",RP1,RP2,RP3,RP4);
-		Delay_ms(20);
 	}
+	
+} 
+void TIM1_UP_IRQHandler(void)
+{
+	static uint16_t count1,count2;
+	if (TIM_GetITStatus(TIM1, TIM_IT_Update) == SET)
+	{
+		// Encoder_Tick();
+		Key_Tick();
+		count1 ++;
+		count2 ++;
+		//外环定位置控制
+		if(count2 >= 40)
+		{
+			speed = Encoder_Get();
+			location += speed;
+			count2 = 0;
+			Outer.Actual = location;
+			PID_Update(&Outer);
+			Inner.Target = Outer.Out;
+		}
+		//内环定速度
+		if(count1 >= 40)
+		{
+			count1 = 0;
+			Inner.Actual = speed;//Actual改成+=即可改为定位置
+			PID_Update(&Inner);
+			Motor_SetPWM(Inner.Out);
+		}	
+
+		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
+	}
+		
+		
 }
+
+

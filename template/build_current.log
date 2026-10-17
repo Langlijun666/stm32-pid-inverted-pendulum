@@ -1,0 +1,22 @@
+*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\STM32\keil5\ARM\ARMCC\Bin'
+Build target 'Target 1'
+compiling main.c...
+linking...
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Encoder_Init (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Encoder_Tick (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol GetSpeed (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Key_GetNum (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Key_Init (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Key_Tick (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Motor_Init (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Motor_SetPWM (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol OLED_Init (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol OLED_Printf (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol OLED_Update (referred from main.o).
+.\Objects\Project.axf: Error: L6218E: Undefined symbol Timer_Init (referred from main.o).
+Not enough information to list image symbols.
+Not enough information to list load addresses in the image map.
+Finished: 2 information, 0 warning and 12 error messages.
+".\Objects\Project.axf" - 12 Error(s), 0 Warning(s).
+Target not created.
+Build Time Elapsed:  00:00:01
