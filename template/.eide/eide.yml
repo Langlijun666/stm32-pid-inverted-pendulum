@@ -93,6 +93,8 @@ virtualFolder:
         - path: Hardware/Encoder.h
         - path: Hardware/Serial.c
         - path: Hardware/Serial.h
+        - path: Hardware/AD.c
+        - path: Hardware/AD.h
       folders: []
     - name: User
       files:
